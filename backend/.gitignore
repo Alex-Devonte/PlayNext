@@ -1,0 +1,18 @@
+# Build output
+dist/
+
+# Node modules
+node_modules/
+
+# Logs
+*.log
+
+# Environment variables
+.env
+
+# OS & Editor junk
+.DS_Store
+*.swp
+
+# Optional: Nodemon state
+.nodemon-debug.json
