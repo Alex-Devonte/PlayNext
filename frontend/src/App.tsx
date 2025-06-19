@@ -1,8 +1,17 @@
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import HomePage from "./components/HomePage";
+import Footer from "./components/Footer";
+
 function App() {
   return (
-    <>
-      <h1 className="text-6xl">PlayNext</h1>
-    </>
+    <Router>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/questionnaire" element={<div>Questionnaire Page</div>} />
+        <Route path="/random" element={<div>Random Game Page</div>} />
+      </Routes>
+      <Footer />
+    </Router>
   );
 }
 
