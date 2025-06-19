@@ -7,6 +7,16 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const accessToken = await getAccessToken();
+const headers = {
+  "Client-ID": process.env.TWITCH_CLIENT_ID,
+  Authorization: `Bearer ${accessToken}`,
+  Accept: "application/json",
+};
+
+// Helper function to make POST requests to IGDB
+async function igdbPost(endpoint, query) {
+  return axios.post(process.env.BASE_URL + endpoint, query, { headers });
+}
 
 const typeDefs = `#graphql
 
@@ -15,15 +25,9 @@ type RandomGame {
   name: String
 }
 
-type PopularityDetail {
-  type: String
-  value: Float
-}
-
 type Game {
   id: ID
   name: String
-  popularityDetails: [PopularityDetail]
 }
 
 type Query {
@@ -47,16 +51,9 @@ const resolvers = {
         // rating != null filters out games without ratings
         // first_release_date < now filters out future releases
 
-        const countResponse = await axios.post(
-          process.env.BASE_URL + "/games/count",
-          `where game_type = 0 & rating != null & first_release_date < ${now};`,
-          {
-            headers: {
-              "Client-ID": process.env.TWITCH_CLIENT_ID,
-              Authorization: `Bearer ${accessToken}`,
-              Accept: "application/json",
-            },
-          }
+        const countResponse = await igdbPost(
+          "/games/count",
+          `where game_type = 0 & rating != null & first_release_date < ${now};`
         );
 
         const totalCount = countResponse.data.count;
@@ -64,16 +61,9 @@ const resolvers = {
         // Create a random offset based on the total count which allows a different game to be selected each time
         const offset = Math.floor(Math.random() * (totalCount - limit));
 
-        const response = await axios.post(
-          process.env.BASE_URL + "/games",
-          `fields name; where game_type = 0 &  first_release_date < ${now} & rating != null; limit ${limit}; offset ${offset};`,
-          {
-            headers: {
-              "Client-ID": process.env.TWITCH_CLIENT_ID,
-              Authorization: `Bearer ${accessToken}`,
-              Accept: "application/json",
-            },
-          }
+        const response = await igdbPost(
+          "/games",
+          `fields name; where game_type = 0 &  first_release_date < ${now} & rating != null; limit ${limit}; offset ${offset};`
         );
 
         console.log("Fetched game:", response.data);
@@ -90,19 +80,12 @@ const resolvers = {
     topGames: async () => {
       try {
         // Query popularity_primitives endpoint filtering for Playing (3)
-        const response = await axios.post(
-          process.env.BASE_URL + "/popularity_primitives",
+        const response = await igdbPost(
+          "/popularity_primitives",
           `fields game_id, value, popularity_type;
            where popularity_type = (3);
            sort value desc;
-           limit 5;`,
-          {
-            headers: {
-              "Client-ID": process.env.TWITCH_CLIENT_ID,
-              Authorization: `Bearer ${accessToken}`,
-              Accept: "application/json",
-            },
-          }
+           limit 5;`
         );
 
         // response.data is an array of popularity primitives,
@@ -114,17 +97,10 @@ const resolvers = {
         if (gameIds.length === 0) return [];
 
         // Fetch game info for all gameIds
-        const gamesResponse = await axios.post(
-          process.env.BASE_URL + "/games",
+        const gamesResponse = await igdbPost(
+          "/games",
           `fields id, name;
-           where id = (${gameIds.join(",")});`,
-          {
-            headers: {
-              "Client-ID": process.env.TWITCH_CLIENT_ID,
-              Authorization: `Bearer ${accessToken}`,
-              Accept: "application/json",
-            },
-          }
+           where id = (${gameIds.join(",")});`
         );
 
         const gamesMap = new Map();
