@@ -10,6 +10,11 @@ const accessToken = await getAccessToken();
 
 const typeDefs = `#graphql
 
+type RandomGame {
+  id: ID
+  name: String
+}
+
 type PopularityDetail {
   type: String
   value: Float
@@ -22,13 +27,66 @@ type Game {
 }
 
 type Query {
+  randomGame: RandomGame
   topGames: [Game!]
 }
 `;
 
-//Get the top 5 games by playing popularity (3)
 const resolvers = {
+  // Get a random game from IGDB
   Query: {
+    randomGame: async () => {
+      try {
+        // Get the current timestamp in seconds
+        const now = Math.floor(Date.now() / 1000);
+        const limit = 1;
+
+        // Get the count of games that match the criteria
+
+        // game_type = 0 means main games, not DLC or expansions
+        // rating != null filters out games without ratings
+        // first_release_date < now filters out future releases
+
+        const countResponse = await axios.post(
+          process.env.BASE_URL + "/games/count",
+          `where game_type = 0 & rating != null & first_release_date < ${now};`,
+          {
+            headers: {
+              "Client-ID": process.env.TWITCH_CLIENT_ID,
+              Authorization: `Bearer ${accessToken}`,
+              Accept: "application/json",
+            },
+          }
+        );
+
+        const totalCount = countResponse.data.count;
+
+        // Create a random offset based on the total count which allows a different game to be selected each time
+        const offset = Math.floor(Math.random() * (totalCount - limit));
+
+        const response = await axios.post(
+          process.env.BASE_URL + "/games",
+          `fields name; where game_type = 0 &  first_release_date < ${now} & rating != null; limit ${limit}; offset ${offset};`,
+          {
+            headers: {
+              "Client-ID": process.env.TWITCH_CLIENT_ID,
+              Authorization: `Bearer ${accessToken}`,
+              Accept: "application/json",
+            },
+          }
+        );
+
+        console.log("Fetched game:", response.data);
+        return {
+          id: response.data[0].id,
+          name: response.data[0].name,
+        };
+      } catch (error) {
+        console.error("Failed to fetch random game:", error.response?.data || error.message);
+        return null;
+      }
+    },
+    // Get the top 5 games by playing popularity (3)
     topGames: async () => {
       try {
         // Query popularity_primitives endpoint filtering for Playing (3)
