@@ -1,13 +1,16 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import HomePage from "./components/HomePage";
 import Footer from "./components/Footer";
+import GameDetail from "./components/GameDetail";
+import Questionnaire from "./components/Questionnaire";
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/questionnaire" element={<div>Questionnaire Page</div>} />
+        <Route path="/questionnaire" element={<Questionnaire />} />
+        <Route path="/game/:id" element={<GameDetail />} />
       </Routes>
       <Footer />
     </Router>
