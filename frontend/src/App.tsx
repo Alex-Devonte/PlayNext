@@ -8,7 +8,6 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/questionnaire" element={<div>Questionnaire Page</div>} />
-        <Route path="/random" element={<div>Random Game Page</div>} />
       </Routes>
       <Footer />
     </Router>
