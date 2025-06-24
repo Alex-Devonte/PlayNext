@@ -21,18 +21,104 @@ async function igdbPost(endpoint, query) {
 const typeDefs = `#graphql
 
 type RandomGame {
-  id: ID
+  id: ID!
   name: String
 }
 
 type Game {
+  id: ID!
+  name: String
+}
+
+type RatingCategory {
+  id: ID
+  rating: String
+}
+
+type RatingOrganization {
   id: ID
   name: String
 }
 
+type Genre {
+  id: ID
+  name: String
+}
+
+type AgeRating {
+  id: ID
+  ratingCategory: RatingCategory
+  organization: RatingOrganization
+}
+
+type Cover {
+  url: String
+}
+
+type ReleaseDate {
+  id: ID
+  human: String              
+}
+
+type Keyword {
+  id: ID
+  name: String
+}
+
+type Company {
+  id: ID
+  name: String
+}
+
+type InvolvedCompany {
+  company: Company
+  developer: Boolean
+  publisher: Boolean
+}
+
+type Platform {
+  id: ID
+  name: String
+}
+
+type Perspective {
+  id: ID
+  name: String
+}
+
+type GameMode {
+  id: ID
+  name: String  
+}
+
+type timeToBeat {
+  hastily: Int
+  normally: Int
+  completely: Int
+}
+
+type GameDetail {
+  id: ID!
+  name: String
+  summary: String
+  genres: [Genre]
+  ageRatings: [AgeRating]
+  cover: Cover
+  releaseDates: [ReleaseDate]
+  keywords: [Keyword]
+  developers: [Company]
+  publishers: [Company]
+  platforms: [Platform]
+  perspectives: [Perspective]
+  gameModes: [GameMode]
+  timeToBeat: timeToBeat
+}
+
+
 type Query {
   randomGame: RandomGame
   topGames: [Game!]
+  gameDetail(id: ID!): GameDetail
 }
 `;
 
@@ -122,6 +208,102 @@ const resolvers = {
       } catch (error) {
         console.error("Failed to fetch top games by popularity primitives:", error.response?.data || error.message);
         return [];
+      }
+    },
+    // Get detailed information about a specific game by its ID
+    gameDetail: async (_, { id }) => {
+      try {
+        const response = await igdbPost(
+          "/games",
+          `fields name, summary, genres.name, age_ratings.organization.name, age_ratings.rating_category.rating,
+           cover.url, release_dates.date, release_dates.human, keywords.name,
+           involved_companies.company.name, involved_companies.developer, involved_companies.publisher,
+           platforms.name, player_perspectives.name, game_modes.name;
+           where id = ${id};`
+        );
+
+        //Get play time data
+        const timeToBeatData = await igdbPost(
+          "/game_time_to_beats",
+          `fields hastily, normally, completely; where game_id = ${id};`
+        );
+
+        const responseData = response.data[0];
+
+        function convertSecondsToHours(seconds) {
+          return Math.floor(seconds / 3600);
+        }
+
+        const name = responseData.name;
+        const summary = responseData.summary;
+        const genres = responseData.genres || [];
+        const ratings = responseData.age_ratings || [];
+        const coverUrl = responseData.cover;
+        const releaseDates = responseData.release_dates.sort((a, b) => a.date - b.date)[0]; // Order release dates by date to get the earliest first
+        const keywords = responseData.keywords || [];
+        const involvedCompanies = responseData.involved_companies || [];
+        const platforms = responseData.platforms || [];
+        const perspectives = responseData.player_perspectives || [];
+        const gameModes = responseData.game_modes || [];
+        const timesToBeat = timeToBeatData.data?.[0]
+          ? {
+              hastily: convertSecondsToHours(timeToBeatData.data[0].hastily),
+              normally: convertSecondsToHours(timeToBeatData.data[0].normally),
+              completely: convertSecondsToHours(timeToBeatData.data[0].completely),
+            }
+          : {
+              hastily: null,
+              normally: null,
+              completely: null,
+            };
+
+        // Map involved companies to separate developers and publishers
+        const developers = involvedCompanies
+          ?.filter((c) => c.developer)
+          .map((c) => ({
+            id: c.company?.id,
+            name: c.company?.name,
+          }));
+
+        const publishers = involvedCompanies
+          ?.filter((c) => c.publisher)
+          .map((c) => ({
+            id: c.company?.id,
+            name: c.company?.name,
+          }));
+
+        const gameDetails = {
+          id: id,
+          name: name,
+          summary: summary,
+          genres: genres.map((genre) => ({ id: genre.id, name: genre.name })),
+          ageRatings: ratings.map((rating) => ({
+            id: rating.id,
+            ratingCategory: {
+              id: rating.rating_category.id,
+              name: rating.rating_category.name,
+              description: rating.rating_category.description,
+            },
+            organization: {
+              id: rating.organization.id,
+              name: rating.organization.name,
+              description: rating.organization.description,
+            },
+          })),
+          cover: coverUrl ? { url: coverUrl.url } : null,
+          releaseDates: releaseDates ? [{ id: releaseDates.id, human: releaseDates.human }] : [],
+          keywords: keywords.map((keyword) => ({ id: keyword.id, name: keyword.name })),
+          developers,
+          publishers,
+          platforms: platforms.map((platform) => ({ id: platform.id, name: platform.name })),
+          perspectives: perspectives.map((perspective) => ({ id: perspective.id, name: perspective.name })),
+          gameModes: gameModes.map((mode) => ({ id: mode.id, name: mode.name })),
+          timeToBeat: timesToBeat,
+        };
+
+        return gameDetails;
+      } catch (error) {
+        console.error("Failed to fetch game detail:", error.response?.data || error.message);
       }
     },
   },
