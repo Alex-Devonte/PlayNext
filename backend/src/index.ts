@@ -20,6 +20,13 @@ async function igdbPost(endpoint, query) {
 
 const typeDefs = `#graphql
 
+input userPreferencesInput {
+  genres: [Int]
+  platforms: [Int]
+  gameModes: [Int]
+  perspectives: [Int]
+}
+
 type RandomGame {
   id: ID!
   name: String
@@ -116,6 +123,7 @@ type GameDetail {
 
 
 type Query {
+  recommendedGames(preferences: userPreferencesInput): [GameDetail!]
   randomGame: RandomGame
   topGames: [Game!]
   gameDetail(id: ID!): GameDetail
@@ -123,8 +131,40 @@ type Query {
 `;
 
 const resolvers = {
-  // Get a random game from IGDB
   Query: {
+    // Gets recommended games based on user preferences
+    recommendedGames: async (_, { preferences }) => {
+      try {
+        const { genres, platforms, gameModes, perspectives } = preferences;
+
+        // Combine all filters into a single query
+        const filters = `genres = (${genres.join(",")}) &
+        platforms = (${platforms.join(",")}) &      
+        game_modes = (${gameModes.join(",")}) &        
+        player_perspectives = (${perspectives.join(",")})`;
+
+        const query = `where ${filters}; limit 12;`;
+
+        console.log("IGDB query for recommended game:", query);
+        console.log("User preferences:", preferences);
+
+        const response = await igdbPost("/games", query);
+
+        // Get the ids from the response
+        const gameIds = response.data.map((game) => game.id);
+        console.log("Game IDs from response:", gameIds);
+
+        // Grab details for each game using the gameDetail resolver
+        const gameRecommendations = await Promise.all(gameIds.map((id) => resolvers.Query.gameDetail(_, { id })));
+        console.log("Game recommendations:", gameRecommendations);
+
+        return gameRecommendations;
+      } catch (error) {
+        console.error("Failed to fetch recommended game:", error.response?.data || error.message);
+        return null;
+      }
+    },
+    // Get a random game from IGDB
     randomGame: async () => {
       try {
         // Get the current timestamp in seconds
