@@ -1,10 +1,9 @@
 import { gql, useQuery } from "@apollo/client";
-import { useLocation } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 function GameDetail() {
-  // Grab the game ID from the location state
-  const location = useLocation();
-  const id = parseInt(location.state.id, 10);
+  // Grab the game ID from the URL parameters
+  const { id } = useParams();
 
   const DETAIL_QUERY = gql`
     query GameDetail($id: ID!) {
