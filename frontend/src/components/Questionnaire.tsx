@@ -1,8 +1,10 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function Questionnaire() {
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<{ [key: string]: number[] }>({});
+  const navigate = useNavigate();
 
   const questions = [
     {
@@ -99,6 +101,7 @@ function Questionnaire() {
 
   const handleSubmit = () => {
     console.log("Answers:", answers);
+    navigate("/results", { state: { answers } });
   };
 
   // Get the options for the current question or set to an empty array
