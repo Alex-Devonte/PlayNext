@@ -121,9 +121,11 @@ function Questionnaire() {
   const isSubmitDisabled = selectedOptions.length === 0;
 
   return (
-    <div>
-      <h2>{currentQuestion.question}</h2>
-      <div>
+    <div className="flex flex-col p-5 lg:mx-auto xl:w-1/2">
+      <h2 className="mb-10 text-3xl font-semibold">
+        {currentQuestion.question}
+      </h2>
+      <div className="grid grid-cols-2 justify-items-center gap-5 md:grid-cols-3 lg:grid-cols-4">
         {currentQuestion.options.map((option) => {
           const isSelected = (answers[currentQuestion.key] || []).includes(
             option.id,
@@ -131,8 +133,10 @@ function Questionnaire() {
           return (
             <div
               key={option.id}
-              className={`cursor-pointer rounded border p-2 ${
-                isSelected ? "bg-blue-500 text-white" : "bg-gray-100"
+              className={`flex h-[150px] w-full cursor-pointer items-center justify-center text-center text-xl ${
+                isSelected
+                  ? "border-2 border-gray-800 bg-gray-600 text-white"
+                  : "border-1 bg-white"
               }`}
               onClick={() => handleSelect(currentQuestion.key, option.id)}
             >
@@ -141,11 +145,11 @@ function Questionnaire() {
           );
         })}
       </div>
-      <div className="mt-4 flex gap-2">
+      <div className="my-24 flex justify-end gap-2">
         <button
           onClick={handlePrev}
           disabled={isPrevDisabled}
-          className="bg-blue-300 p-2 disabled:bg-gray-200 disabled:text-white"
+          className="w-[80px] rounded bg-gray-800 p-2 text-white disabled:bg-gray-200"
         >
           Go Back
         </button>
@@ -153,7 +157,7 @@ function Questionnaire() {
           <button
             onClick={handleSubmit}
             disabled={isSubmitDisabled}
-            className="bg-blue-300 p-2 disabled:bg-gray-200 disabled:text-white"
+            className="w-[80px] rounded bg-gray-800 p-2 text-white disabled:bg-gray-200"
           >
             Submit
           </button>
@@ -161,7 +165,7 @@ function Questionnaire() {
           <button
             onClick={handleNext}
             disabled={isNextDisabled}
-            className="bg-blue-300 p-2 disabled:bg-gray-200 disabled:text-white"
+            className="w-[80px] rounded bg-gray-800 p-2 text-white disabled:bg-gray-200"
           >
             Next
           </button>
