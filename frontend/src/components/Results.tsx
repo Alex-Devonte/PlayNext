@@ -1,6 +1,7 @@
 import { gql, useQuery } from "@apollo/client";
 import { Link, useLocation } from "react-router-dom";
 import GameCard from "./GameCard";
+import noCoverFallback from "/no_cover.png";
 
 function Results() {
   const RECOMMENDATIONS_QUERY = gql`
@@ -50,7 +51,7 @@ function Results() {
           <GameCard
             key={game.id}
             name={game.name}
-            coverUrl={game.cover.url}
+            coverUrl={game.cover?.url ? game.cover?.url : noCoverFallback}
             summary={game.summary}
           />
         </Link>
