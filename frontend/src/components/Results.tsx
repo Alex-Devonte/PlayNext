@@ -44,18 +44,22 @@ function Results() {
   console.log("Recommended games:", data.recommendedGames);
 
   return (
-    <div>
-      <h2>Your Game Recommendations</h2>
-      {data.recommendedGames.map((game: Game) => (
-        <Link to={`/game/${game.id}`} key={game.id}>
-          <GameCard
-            key={game.id}
-            name={game.name}
-            coverUrl={game.cover?.url ? game.cover?.url : noCoverFallback}
-            summary={game.summary}
-          />
-        </Link>
-      ))}
+    <div className="mb-24 p-5">
+      <h2 className="mt-5 mb-20 text-center text-4xl font-bold">
+        Your Game Recommendations
+      </h2>
+      <div className="grid w-full grid-cols-1 justify-items-center gap-5 p-5 md:grid-cols-2 md:p-0 lg:mx-auto lg:w-3/4 lg:grid-cols-5 lg:justify-items-normal">
+        {data.recommendedGames.map((game: Game) => (
+          <Link to={`/game/${game.id}`} key={game.id}>
+            <GameCard
+              key={game.id}
+              name={game.name}
+              coverUrl={game.cover?.url ? game.cover?.url : noCoverFallback}
+              summary={game.summary}
+            />
+          </Link>
+        ))}
+      </div>
     </div>
   );
 }
