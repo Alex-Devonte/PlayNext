@@ -31,7 +31,7 @@ function HomePage() {
   if (loading) return <p>Loading your random game...</p>;
 
   return (
-    <div className="flex h-screen flex-col justify-center">
+    <div className="mb-[-100px] flex h-screen flex-col justify-center">
       <div className="my-10 flex flex-col items-center justify-center gap-5">
         <h1 className="mt-3 text-8xl font-bold">PlayNext</h1>
         <h2 className="text-3xl text-gray-950 italic">
