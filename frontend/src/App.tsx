@@ -4,10 +4,12 @@ import Footer from "./components/Footer";
 import GameDetail from "./components/GameDetail";
 import Questionnaire from "./components/Questionnaire";
 import Results from "./components/Results";
+import Header from "./components/Header";
 
 function App() {
   return (
     <Router>
+      <Header />
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/questionnaire" element={<Questionnaire />} />
