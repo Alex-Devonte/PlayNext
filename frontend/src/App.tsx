@@ -9,14 +9,18 @@ import Header from "./components/Header";
 function App() {
   return (
     <Router>
-      <Header />
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/questionnaire" element={<Questionnaire />} />
-        <Route path="/game/:id" element={<GameDetail />} />
-        <Route path="/results" element={<Results />} />
-      </Routes>
-      <Footer />
+      <div className="flex min-h-screen flex-col">
+        <Header />
+        <main className="flex-1">
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/questionnaire" element={<Questionnaire />} />
+            <Route path="/game/:id" element={<GameDetail />} />
+            <Route path="/results" element={<Results />} />
+          </Routes>
+        </main>
+        <Footer />
+      </div>
     </Router>
   );
 }
