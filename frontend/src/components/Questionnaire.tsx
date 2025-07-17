@@ -125,7 +125,7 @@ function Questionnaire() {
       <h2 className="text-primary mb-10 text-3xl font-semibold">
         {currentQuestion.question}
       </h2>
-      <div className="grid grid-cols-2 justify-items-center gap-5 md:grid-cols-3 lg:grid-cols-4">
+      <div className="grid grid-cols-2 justify-items-center gap-6 md:grid-cols-3 lg:grid-cols-4">
         {currentQuestion.options.map((option) => {
           const isSelected = (answers[currentQuestion.key] || []).includes(
             option.id,
@@ -133,10 +133,10 @@ function Questionnaire() {
           return (
             <div
               key={option.id}
-              className={`text-light outline-accent flex h-[150px] w-full cursor-pointer items-center justify-center text-center text-xl font-semibold ${
+              className={`text-light outline-accent flex h-[150px] w-full cursor-pointer items-center justify-center rounded-2xl text-center text-xl font-semibold transition-all duration-200 ease-in-out active:scale-95 ${
                 isSelected
-                  ? "bg-primary"
-                  : "bg-secondary hover:outline-4 active:outline-4"
+                  ? "bg-primary ring-accent scale-105 shadow-2xl hover:scale-[1.08]"
+                  : "bg-secondary hover:bg-lighterSecondary hover:scale-105 hover:shadow-xl"
               }`}
               onClick={() => handleSelect(currentQuestion.key, option.id)}
             >
@@ -149,7 +149,7 @@ function Questionnaire() {
         <button
           onClick={handlePrev}
           disabled={isPrevDisabled}
-          className="bg-secondary text-light w-[80px] rounded p-2 disabled:bg-gray-200"
+          className="bg-secondary text-light hover:bg-lighterSecondary w-[80px] cursor-pointer rounded p-2 transition-colors duration-150 disabled:cursor-not-allowed disabled:bg-gray-200"
         >
           Go Back
         </button>
@@ -157,7 +157,7 @@ function Questionnaire() {
           <button
             onClick={handleSubmit}
             disabled={isSubmitDisabled}
-            className="bg-primary text-light w-[80px] rounded p-2 disabled:bg-gray-200"
+            className="bg-primary text-light hover:bg-darkerPrimary w-[80px] cursor-pointer rounded p-2 transition-colors duration-150 disabled:cursor-not-allowed disabled:bg-gray-200"
           >
             Submit
           </button>
@@ -165,7 +165,7 @@ function Questionnaire() {
           <button
             onClick={handleNext}
             disabled={isNextDisabled}
-            className="bg-primary text-light w-[80px] rounded p-2 disabled:bg-gray-200"
+            className="bg-primary text-light hover:bg-darkerPrimary w-[80px] cursor-pointer rounded p-2 transition-colors duration-150 disabled:cursor-not-allowed disabled:bg-gray-200"
           >
             Next
           </button>

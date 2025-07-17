@@ -41,14 +41,14 @@ function HomePage() {
       <div className="flex flex-col items-center gap-5 md:flex-row md:justify-center">
         <Link
           to="/questionnaire"
-          className="bg-primary hover:bg-darkerPrimary active:bg-darkerPrimary w-[300px] rounded-3xl p-4 text-center text-white shadow-xl"
+          className="bg-primary hover:bg-darkerPrimary active:bg-darkerPrimary w-[300px] rounded-3xl p-4 text-center text-white shadow-xl transition-colors duration-150 ease-in"
         >
           Take the questionnaire
         </Link>
         <a
           href="#"
           onClick={() => getRandomGame()}
-          className="bg-primary hover:bg-darkerPrimary active:bg-darkerPrimary w-[300px] rounded-3xl p-4 text-center text-white shadow-xl"
+          className="bg-primary hover:bg-darkerPrimary active:bg-darkerPrimary w-[300px] rounded-3xl p-4 text-center text-white shadow-xl transition-colors duration-150 ease-in"
         >
           Find a random game
         </a>
