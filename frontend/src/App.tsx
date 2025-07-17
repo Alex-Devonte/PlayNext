@@ -9,7 +9,7 @@ import Header from "./components/Header";
 function App() {
   return (
     <Router>
-      <div className="flex min-h-screen flex-col">
+      <div className="bg-light flex min-h-screen flex-col">
         <Header />
         <main className="flex-1">
           <Routes>
