@@ -4,7 +4,7 @@ interface gameCardProps {
   summary: string;
 }
 
-const GameCard: React.FC<gameCardProps> = ({ name, coverUrl, summary }) => {
+const GameCard: React.FC<gameCardProps> = ({ name, coverUrl }) => {
   return (
     <div className="flex h-[350px] w-[350px] flex-col rounded-2xl lg:w-full">
       <div className="relative h-full w-full overflow-hidden rounded-t-2xl">
