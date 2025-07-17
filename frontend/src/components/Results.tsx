@@ -44,11 +44,11 @@ function Results() {
   console.log("Recommended games:", data.recommendedGames);
 
   return (
-    <div className="mb-24 p-5">
-      <h2 className="mt-5 mb-20 text-center text-4xl font-bold">
+    <div className="mb-20 p-1">
+      <h2 className="text-primary mt-5 mb-32 text-center text-4xl font-bold md:mb-20">
         Your Game Recommendations
       </h2>
-      <div className="grid w-full grid-cols-1 justify-items-center gap-5 p-5 md:grid-cols-2 md:p-0 lg:mx-auto lg:w-3/4 lg:grid-cols-5 lg:justify-items-normal">
+      <div className="flex w-full grid-cols-1 justify-items-center gap-5 overflow-x-scroll p-5 md:grid md:grid-cols-2 md:overflow-x-auto md:p-0 lg:mx-auto lg:grid-cols-4 lg:justify-items-normal xl:grid-cols-5">
         {data.recommendedGames.map((game: Game) => (
           <Link to={`/game/${game.id}`} key={game.id}>
             <GameCard

@@ -9,9 +9,12 @@ function Header() {
   }
 
   return (
-    <header className="w-full bg-gray-900 px-4 py-3 text-white">
+    <header className="bg-dark w-full px-4 py-3">
       <div>
-        <Link to="/" className="text-2xl font-bold">
+        <Link
+          to="/"
+          className="text-light hover:text-primary active:text-primary text-2xl font-bold"
+        >
           PlayNext
         </Link>
       </div>

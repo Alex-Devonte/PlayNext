@@ -122,7 +122,7 @@ function Questionnaire() {
 
   return (
     <div className="flex flex-col p-5 lg:mx-auto xl:w-1/2">
-      <h2 className="mb-10 text-3xl font-semibold">
+      <h2 className="text-primary mb-10 text-3xl font-semibold">
         {currentQuestion.question}
       </h2>
       <div className="grid grid-cols-2 justify-items-center gap-5 md:grid-cols-3 lg:grid-cols-4">
@@ -133,10 +133,10 @@ function Questionnaire() {
           return (
             <div
               key={option.id}
-              className={`flex h-[150px] w-full cursor-pointer items-center justify-center text-center text-xl ${
+              className={`text-light outline-accent flex h-[150px] w-full cursor-pointer items-center justify-center text-center text-xl font-semibold ${
                 isSelected
-                  ? "border-2 border-gray-800 bg-gray-600 text-white"
-                  : "border-1 bg-white"
+                  ? "bg-primary"
+                  : "bg-secondary hover:outline-4 active:outline-4"
               }`}
               onClick={() => handleSelect(currentQuestion.key, option.id)}
             >
@@ -149,7 +149,7 @@ function Questionnaire() {
         <button
           onClick={handlePrev}
           disabled={isPrevDisabled}
-          className="w-[80px] rounded bg-gray-800 p-2 text-white disabled:bg-gray-200"
+          className="bg-secondary text-light w-[80px] rounded p-2 disabled:bg-gray-200"
         >
           Go Back
         </button>
@@ -157,7 +157,7 @@ function Questionnaire() {
           <button
             onClick={handleSubmit}
             disabled={isSubmitDisabled}
-            className="w-[80px] rounded bg-gray-800 p-2 text-white disabled:bg-gray-200"
+            className="bg-primary text-light w-[80px] rounded p-2 disabled:bg-gray-200"
           >
             Submit
           </button>
@@ -165,7 +165,7 @@ function Questionnaire() {
           <button
             onClick={handleNext}
             disabled={isNextDisabled}
-            className="w-[80px] rounded bg-gray-800 p-2 text-white disabled:bg-gray-200"
+            className="bg-primary text-light w-[80px] rounded p-2 disabled:bg-gray-200"
           >
             Next
           </button>
