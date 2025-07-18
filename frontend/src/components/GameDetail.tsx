@@ -149,46 +149,60 @@ function GameDetail() {
        <div>
          <h2 className="mb-1 text-lg font-bold">Developer</h2>
          <p className="text-primary font-semibold">
-           {game.developers.map((developer) => developer.name).join(", ")}
+           {game.developers?.length > 0
+             ? game.developers.map((developer) => developer.name).join(", ")
+             : "N/A"}
          </p>
        </div>
 
        <div>
          <h2 className="mb-1 text-lg font-bold">Publisher</h2>
          <p className="text-primary font-semibold">
-           {game.publishers.map((publisher) => publisher.name).join(", ")}
+           {game.publishers?.length > 0
+             ? game.publishers.map((publisher) => publisher.name).join(", ")
+             : "N/A"}
          </p>
        </div>
 
        <div>
          <h2 className="mb-1 text-lg font-bold">Keywords</h2>
          <p className="text-primary italic">
-           {game.keywords.map((keyword) => keyword.name).join(", ")}
+           {game.keywords?.length > 0
+             ? game.keywords.map((keyword) => keyword.name).join(", ")
+             : "N/A"}
          </p>
        </div>
 
        <div>
          <h2 className="mb-1 text-lg font-bold">Perspective</h2>
          <p className="text-primary font-semibold">
-           {game.perspectives.map((perspective) => perspective.name).join(", ")}
+           {game.perspectives?.length > 0
+             ? game.perspectives
+                 .map((perspective) => perspective.name)
+                 .join(", ")
+             : "N/A"}
          </p>
        </div>
 
        <div>
          <h2 className="mb-1 text-lg font-bold">Game Modes</h2>
          <p className="text-primary font-semibold">
-           {game.gameModes.map((mode) => mode.name).join(", ")}
+           {game.gameModes?.length > 0
+             ? game.gameModes.map((mode) => mode.name).join(", ")
+             : "N/A"}
          </p>
        </div>
 
        <div className="mb-5">
          <h2 className="mb-1 text-lg font-semibold">Age Ratings</h2>
          <ul className="grid grid-cols-3">
-           {game.ageRatings.map((rating) => (
-             <li className="text-dark font-semibold" key={rating.id}>
-               {rating.organization.name}
-             </li>
-           ))}
+           {game.ageRatings?.length > 0
+             ? game.ageRatings.map((rating) => (
+                 <li className="text-dark font-semibold" key={rating.id}>
+                   {rating.organization.name}
+                 </li>
+               ))
+             : "N/A"}
          </ul>
        </div>
      </div>
