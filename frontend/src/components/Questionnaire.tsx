@@ -88,6 +88,7 @@ function Questionnaire() {
   // Handles going to previous question
   const handlePrev = () => {
     if (currentStep > 0) {
+      window.scrollTo(0, 0);
       setCurrentStep((prev) => prev - 1);
     }
   };
@@ -95,6 +96,7 @@ function Questionnaire() {
   // Handles going to next question
   const handleNext = () => {
     if (currentStep < questions.length - 1) {
+      window.scrollTo(0, 0);
       setCurrentStep((prev) => prev + 1);
     }
   };
