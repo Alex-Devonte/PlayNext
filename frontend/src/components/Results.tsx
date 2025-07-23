@@ -2,6 +2,8 @@ import { gql, useQuery } from "@apollo/client";
 import { Link, useLocation } from "react-router-dom";
 import GameCard from "./GameCard";
 import noCoverFallback from "/no_cover.png";
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 function Results() {
   const RECOMMENDATIONS_QUERY = gql`
@@ -17,6 +19,8 @@ function Results() {
     }
   `;
   const location = useLocation();
+  const navigate = useNavigate();
+
   const { answers } = location.state;
 
   const preferences = {
@@ -38,10 +42,35 @@ function Results() {
     variables: { preferences },
   });
 
+  // If only one game is recommended, redirect to its detail page
+  useEffect(() => {
+    if (data?.recommendedGames.length === 1) {
+      const gameID = data.recommendedGames[0].id;
+      navigate(`/game/${gameID}`, {
+        state: { id: gameID },
+      });
+    }
+  }, [data, navigate]);
+
   if (loading) return <p>Loading recommendations...</p>;
   if (error) return <p>Error: {error.message}</p>;
 
   console.log("Recommended games:", data.recommendedGames);
+  if (data.recommendedGames.length == 0) {
+    return (
+      <div className="mt-20 flex flex-col items-center justify-center text-center">
+        <p className="mb-10 text-xl md:text-2xl lg:text-4xl">
+          No recommendations found. Try again!
+        </p>
+        <Link
+          to="/questionnaire"
+          className="bg-primary text-light hover:bg-darkerPrimary w-[80px] cursor-pointer rounded p-2 transition-colors duration-150"
+        >
+          Go Back
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div className="mb-20 p-1">
