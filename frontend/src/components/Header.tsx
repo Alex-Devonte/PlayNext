@@ -3,8 +3,8 @@ import { Link, useLocation } from "react-router-dom";
 function Header() {
   const location = useLocation();
 
-  //Hide the header on the home page
-  if (location.pathname === "/") {
+  //Hide the header on the home & 404 pages
+  if (location.pathname === "/" || location.pathname === "/404") {
     return <></>;
   }
 
