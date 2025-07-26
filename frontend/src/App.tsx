@@ -15,9 +15,9 @@ import PageNotFound from "./components/PageNotFound";
 function App() {
   return (
     <Router>
-      <div className="bg-light flex min-h-screen flex-col">
+      <div className="flex min-h-screen flex-col">
         <Header />
-        <main className="flex-1">
+        <main className="bg-light flex-1">
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/questionnaire" element={<Questionnaire />} />
