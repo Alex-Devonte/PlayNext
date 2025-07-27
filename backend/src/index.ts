@@ -18,6 +18,16 @@ async function igdbPost(endpoint, query) {
   return axios.post(process.env.BASE_URL + endpoint, query, { headers });
 }
 
+function shuffleRecommendations<T>(arr: T[], limit: number) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    let j = Math.floor(Math.random() * (i * 1));
+    let temp = arr[i];
+    arr[i] = arr[j];
+    arr[j] = temp;
+  }
+  return arr.slice(0, limit);
+}
+
 const typeDefs = `#graphql
 
 input userPreferencesInput {
@@ -136,6 +146,8 @@ const resolvers = {
     recommendedGames: async (_, { preferences }) => {
       try {
         const { genres, platforms, gameModes, perspectives } = preferences;
+        const QUERY_LIMIT = 30;
+        const RECOMMENDED_GAME_LIMIT = 15;
 
         // Combine all filters into a single query
         const filters = `genres = (${genres.join(",")}) &
@@ -143,7 +155,7 @@ const resolvers = {
         game_modes = (${gameModes.join(",")}) &        
         player_perspectives = (${perspectives.join(",")})`;
 
-        const query = `where ${filters}; limit 12;`;
+        const query = `where ${filters}; limit ${QUERY_LIMIT};`;
 
         console.log("IGDB query for recommended game:", query);
         console.log("User preferences:", preferences);
@@ -154,14 +166,18 @@ const resolvers = {
         const gameIds = response.data.map((game) => game.id);
         console.log("Game IDs from response:", gameIds);
 
+        const randomizedGameIds = shuffleRecommendations(gameIds, RECOMMENDED_GAME_LIMIT);
+
         // Grab details for each game using the gameDetail resolver
-        const gameRecommendations = await Promise.all(gameIds.map((id) => resolvers.Query.gameDetail(_, { id })));
+        const gameRecommendations = await Promise.all(
+          randomizedGameIds.map((id) => resolvers.Query.gameDetail(_, { id }))
+        );
         console.log("Game recommendations:", gameRecommendations);
 
         return gameRecommendations;
       } catch (error) {
         console.error("Failed to fetch recommended game:", error.response?.data || error.message);
-        return null;
+        return [];
       }
     },
     // Get a random game from IGDB
@@ -279,7 +295,7 @@ const resolvers = {
         const genres = responseData.genres || [];
         const ratings = responseData.age_ratings || [];
         const coverUrl = responseData.cover;
-        const releaseDates = responseData.release_dates.sort((a, b) => a.date - b.date)[0]; // Order release dates by date to get the earliest first
+        const releaseDates = (responseData.release_dates || []).sort((a, b) => a.date - b.date)[0]; // Order release dates by date to get the earliest first
         const keywords = responseData.keywords || [];
         const involvedCompanies = responseData.involved_companies || [];
         const platforms = responseData.platforms || [];
