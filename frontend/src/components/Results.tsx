@@ -56,7 +56,6 @@ function Results() {
   if (loading) return <p>Loading recommendations...</p>;
   if (error) return <p>Error: {error.message}</p>;
 
-  console.log("Recommended games:", data.recommendedGames);
   if (data.recommendedGames.length == 0) {
     return (
       <div className="mt-20 flex flex-col items-center justify-center text-center">

@@ -102,7 +102,6 @@ function Questionnaire() {
   };
 
   const handleSubmit = () => {
-    console.log("Answers:", answers);
     navigate("/results", { state: { answers } });
   };
 

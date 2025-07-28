@@ -104,7 +104,6 @@ function GameDetail() {
   if (loading) return <p>Loading game details...</p>;
   if (error) return <p>Error fetching game details: {error.message}</p>;
 
-  console.log("Game detail data:", data);
   const game = data?.gameDetail;
 
   //Display keywords if they exist, otherwise show N/A

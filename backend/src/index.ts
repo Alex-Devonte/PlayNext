@@ -157,14 +157,14 @@ const resolvers = {
 
         const query = `where ${filters}; limit ${QUERY_LIMIT};`;
 
-        console.log("IGDB query for recommended game:", query);
-        console.log("User preferences:", preferences);
+        // console.log("IGDB query for recommended game:", query);
+        // console.log("User preferences:", preferences);
 
         const response = await igdbPost("/games", query);
 
         // Get the ids from the response
         const gameIds = response.data.map((game) => game.id);
-        console.log("Game IDs from response:", gameIds);
+        // console.log("Game IDs from response:", gameIds);
 
         const randomizedGameIds = shuffleRecommendations(gameIds, RECOMMENDED_GAME_LIMIT);
 
@@ -172,7 +172,7 @@ const resolvers = {
         const gameRecommendations = await Promise.all(
           randomizedGameIds.map((id) => resolvers.Query.gameDetail(_, { id }))
         );
-        console.log("Game recommendations:", gameRecommendations);
+        // console.log("Game recommendations:", gameRecommendations);
 
         return gameRecommendations;
       } catch (error) {
@@ -208,7 +208,6 @@ const resolvers = {
           `fields name; where game_type = 0 &  first_release_date < ${now} & rating != null; limit ${limit}; offset ${offset};`
         );
 
-        console.log("Fetched game:", response.data);
         return {
           id: response.data[0].id,
           name: response.data[0].name,
@@ -374,4 +373,4 @@ const { url } = await startStandaloneServer(server, {
   listen: { port: 4000 },
 });
 
-console.log(`🚀  Server ready at: ${url}`);
+// console.log(`🚀  Server ready at: ${url}`);

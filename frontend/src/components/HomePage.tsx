@@ -17,7 +17,6 @@ function HomePage() {
     fetchPolicy: "no-cache", // Ensures a a new game is fetched each time
     onCompleted: (data) => {
       if (data?.randomGame.id) {
-        console.log(data.randomGame, " Random game fetched successfully");
         navigate(`/game/${data.randomGame.id}`, {
           state: { id: data.randomGame.id },
         });
