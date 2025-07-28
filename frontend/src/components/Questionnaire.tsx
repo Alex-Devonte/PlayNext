@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 function Questionnaire() {
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<{ [key: string]: number[] }>({});
+  const [progress, setProgress] = useState(0);
   const navigate = useNavigate();
 
   const questions = [
@@ -90,6 +91,7 @@ function Questionnaire() {
     if (currentStep > 0) {
       window.scrollTo(0, 0);
       setCurrentStep((prev) => prev - 1);
+      setProgress(((currentStep - 1) / questions.length) * 100);
     }
   };
 
@@ -98,6 +100,7 @@ function Questionnaire() {
     if (currentStep < questions.length - 1) {
       window.scrollTo(0, 0);
       setCurrentStep((prev) => prev + 1);
+      setProgress(((currentStep + 1) / questions.length) * 100);
     }
   };
 
@@ -123,6 +126,16 @@ function Questionnaire() {
 
   return (
     <div className="flex flex-col p-5 lg:mx-auto xl:w-1/2">
+      <div className="bg-dark mb-5 w-full rounded-full p-1">
+        <div
+          className={`rounded-full p-2 font-bold ${
+            progress === 0 ? "text-light" : "bg-accent"
+          }`}
+          style={{ width: `${progress}%` }}
+        >
+          {progress}%
+        </div>
+      </div>
       <h2 className="text-primary mb-10 text-3xl font-semibold">
         {currentQuestion.question}
       </h2>
