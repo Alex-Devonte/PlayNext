@@ -122,7 +122,7 @@ function GameDetail() {
     <div>
       <div className="text-dark mb-10 px-5 py-10 lg:mx-auto lg:mt-10 lg:max-w-5xl lg:rounded-xl lg:border lg:border-gray-300 lg:bg-white lg:px-16 lg:shadow-2xl">
         <div className="flex flex-col gap-8 lg:flex-row">
-          <div className="mx-auto w-full max-w-md lg:w-1/3">
+          <div className="mx-auto w-10/12 md:w-1/2 lg:w-1/3">
             <img
               src={game.cover.url.replace("t_thumb", "t_cover_big")}
               alt={`${game.name} cover`}
