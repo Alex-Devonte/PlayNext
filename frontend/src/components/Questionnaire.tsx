@@ -136,9 +136,9 @@ function Questionnaire() {
           {progress}%
         </div>
       </div>
-      <h2 className="text-primary mb-10 text-3xl font-semibold">
+      <h1 className="text-primary mb-10 text-3xl font-semibold">
         {currentQuestion.question}
-      </h2>
+      </h1>
       <div className="grid grid-cols-2 justify-items-center gap-6 md:grid-cols-3 lg:grid-cols-4">
         {currentQuestion.options.map((option) => {
           const isSelected = (answers[currentQuestion.key] || []).includes(

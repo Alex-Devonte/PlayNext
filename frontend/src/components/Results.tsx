@@ -74,9 +74,9 @@ function Results() {
 
   return (
     <div className="mb-20 p-1">
-      <h2 className="text-primary mt-5 text-center text-4xl font-bold md:mb-10">
+      <h1 className="text-primary mt-5 text-center text-4xl font-bold md:mb-10">
         Your Game Recommendations
-      </h2>
+      </h1>
       <div className="flex w-full flex-col items-center gap-5 p-5 md:grid md:grid-cols-2 md:justify-items-center md:overflow-x-auto md:p-0 lg:mx-auto lg:grid-cols-4 lg:justify-items-normal lg:overflow-x-hidden lg:p-5 xl:grid-cols-5">
         {data.recommendedGames.map((game: Game) => (
           <Link to={`/game/${game.id}`} key={game.id}>
