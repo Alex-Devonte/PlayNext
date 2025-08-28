@@ -24,10 +24,10 @@ function Results() {
   const { answers } = location.state;
 
   const preferences = {
-    genres: answers.genre || [],
-    platforms: answers.platform || [],
-    gameModes: answers.gameMode || [],
-    perspectives: answers.perspective || [],
+    genres: answers.genres || [],
+    platforms: answers.platforms || [],
+    gameModes: answers.gameModes || [],
+    perspectives: answers.perspectives || [],
   };
 
   interface Game {

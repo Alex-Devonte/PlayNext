@@ -9,7 +9,7 @@ function Questionnaire() {
 
   const questions = [
     {
-      key: "genre",
+      key: "genres",
       question: "What type of games do you enjoy?",
       options: [
         { id: 2, name: "Point-and-click" },
@@ -25,7 +25,7 @@ function Questionnaire() {
       ],
     },
     {
-      key: "platform",
+      key: "platforms",
       question: "What platforms do you play on?",
       options: [
         { id: 6, name: "PC (Microsoft Windows)" },
@@ -43,7 +43,7 @@ function Questionnaire() {
       ],
     },
     {
-      key: "gameMode",
+      key: "gameModes",
       question: "What game modes do you prefer?",
       options: [
         { id: 1, name: "Single player" },
@@ -54,7 +54,7 @@ function Questionnaire() {
       ],
     },
     {
-      key: "perspective",
+      key: "perspectives",
       question: "Which camera perspective do you like?",
       options: [
         { id: 1, name: "First person" },
@@ -105,6 +105,7 @@ function Questionnaire() {
   };
 
   const handleSubmit = () => {
+    console.log(answers);
     navigate("/results", { state: { answers } });
   };
 
