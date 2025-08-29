@@ -1,6 +1,7 @@
 import { getAccessToken } from "./auth.js";
 import { ApolloServer } from "@apollo/server";
 import { startStandaloneServer } from "@apollo/server/standalone";
+import { askGemini, IGDB_MAPPING } from "./ai.js";
 import axios from "axios";
 import dotenv from "dotenv";
 
@@ -31,6 +32,13 @@ function shuffleRecommendations<T>(arr: T[], limit: number) {
 const typeDefs = `#graphql
 
 input userPreferencesInput {
+  genres: [Int]
+  platforms: [Int]
+  gameModes: [Int]
+  perspectives: [Int]
+}
+
+type AIResponse {
   genres: [Int]
   platforms: [Int]
   gameModes: [Int]
@@ -137,11 +145,55 @@ type Query {
   randomGame: RandomGame
   topGames: [Game!]
   gameDetail(id: ID!): GameDetail
+  askAI(prompt: String!): AIResponse
 }
 `;
 
 const resolvers = {
   Query: {
+    askAI: async (_: any, { prompt }: { prompt: string }) => {
+      try {
+        const responseText = await askGemini(`
+          You are an IGDB query generator. Use this mapping table:
+          Genres: ${JSON.stringify(IGDB_MAPPING.genres)}
+          Platforms: ${JSON.stringify(IGDB_MAPPING.platforms)}
+          Game Modes: ${JSON.stringify(IGDB_MAPPING.game_modes)}
+          Player Perspectives: ${JSON.stringify(IGDB_MAPPING.player_perspectives)}
+
+          User asked: "${prompt}"
+
+          Return ONLY valid JSON. Do not include explanations, code fences, or extra text. 
+          The JSON format must be:
+          {
+            "genres": [...],
+            "platforms": [...],
+            "gameModes": [...],
+            "perspectives": [...]
+          }
+
+          When generating recommendations:  
+          - Use ONLY numeric IDs for genres, platforms, and themes. DO NOT use text labels.  
+          - If a category array is empty, populate it with AT LEAST 2 random valid numeric IDs from that category. NEVER leave an array empty.  
+          - Try to ensure the platform array is varied and not always falling back to pc: [6] or playstation 4: [48].
+          - If the array is not empty, leave it as-is.  
+        `);
+
+        //Remove any ```json ``` code blocks or extra whitespace
+        const cleanedText = responseText
+          .trim()
+          .replace(/^```json\s*/, "")
+          .replace(/```$/, "");
+
+        const queryParams = JSON.parse(cleanedText);
+
+        // console.log("AI generated query params:", queryParams);
+        return queryParams;
+      } catch (err) {
+        console.error("AI recommendation error:", err);
+        return [];
+      }
+    },
+
     // Gets recommended games based on user preferences
     recommendedGames: async (_, { preferences }) => {
       try {
