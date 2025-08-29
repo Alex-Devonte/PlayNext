@@ -4,6 +4,13 @@ import { startStandaloneServer } from "@apollo/server/standalone";
 import axios from "axios";
 import dotenv from "dotenv";
 
+import { expressMiddleware } from "@as-integrations/express5";
+import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
+
+import express from "express";
+import http from "http";
+import cors from "cors";
+
 dotenv.config();
 
 const accessToken = await getAccessToken();
@@ -364,13 +371,20 @@ const resolvers = {
   },
 };
 
+const app = express();
+const httpServer = http.createServer(app);
+
 const server = new ApolloServer({
   typeDefs,
   resolvers,
+  plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
 });
 
-const { url } = await startStandaloneServer(server, {
-  listen: { port: 4000 },
-});
+await server.start();
+
+app.use(cors(), express.json(), expressMiddleware(server));
+
+await new Promise((resolve) => httpServer.listen({ port: Number(process.env.PORT) || 4100 }));
+console.log(`🚀 Server ready at on `, process.env.PORT);
 
 // console.log(`🚀  Server ready at: ${url}`);
