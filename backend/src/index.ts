@@ -384,7 +384,7 @@ await server.start();
 
 app.use(cors(), express.json(), expressMiddleware(server));
 
-await new Promise((resolve) => httpServer.listen({ port: Number(process.env.PORT) || 4100 }));
+await new Promise((resolve) => httpServer.listen({ port: Number(process.env.PORT) || 5000 }));
 console.log(`🚀 Server ready at on `, process.env.PORT);
 
 // console.log(`🚀  Server ready at: ${url}`);
