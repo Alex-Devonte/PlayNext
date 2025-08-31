@@ -1,7 +1,11 @@
 import { getAccessToken } from "./auth.js";
 import { ApolloServer } from "@apollo/server";
-import { startStandaloneServer } from "@apollo/server/standalone";
-import { askGemini, IGDB_MAPPING } from "./ai.js";
+import { askGemini } from "./ai.js";
+import { expressMiddleware } from "@as-integrations/express5";
+import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
+import express from "express";
+import http from "http";
+import cors from "cors";
 import axios from "axios";
 import dotenv from "dotenv";
 
@@ -153,30 +157,7 @@ const resolvers = {
   Query: {
     askAI: async (_: any, { prompt }: { prompt: string }) => {
       try {
-        const responseText = await askGemini(`
-          You are an IGDB query generator. Use this mapping table:
-          Genres: ${JSON.stringify(IGDB_MAPPING.genres)}
-          Platforms: ${JSON.stringify(IGDB_MAPPING.platforms)}
-          Game Modes: ${JSON.stringify(IGDB_MAPPING.game_modes)}
-          Player Perspectives: ${JSON.stringify(IGDB_MAPPING.player_perspectives)}
-
-          User asked: "${prompt}"
-
-          Return ONLY valid JSON. Do not include explanations, code fences, or extra text. 
-          The JSON format must be:
-          {
-            "genres": [...],
-            "platforms": [...],
-            "gameModes": [...],
-            "perspectives": [...]
-          }
-
-          When generating recommendations:  
-          - Use ONLY numeric IDs for genres, platforms, and themes. DO NOT use text labels.  
-          - If a category array is empty, populate it with AT LEAST 2 random valid numeric IDs from that category. NEVER leave an array empty.  
-          - Try to ensure the platform array is varied and not always falling back to pc: [6] or playstation 4: [48].
-          - If the array is not empty, leave it as-is.  
-        `);
+        const responseText = await askGemini(prompt);
 
         //Remove any ```json ``` code blocks or extra whitespace
         const cleanedText = responseText
@@ -184,10 +165,7 @@ const resolvers = {
           .replace(/^```json\s*/, "")
           .replace(/```$/, "");
 
-        const queryParams = JSON.parse(cleanedText);
-
-        // console.log("AI generated query params:", queryParams);
-        return queryParams;
+        return JSON.parse(cleanedText);
       } catch (err) {
         console.error("AI recommendation error:", err);
         return [];
@@ -416,13 +394,16 @@ const resolvers = {
   },
 };
 
+const app = express();
+const httpServer = http.createServer(app);
+
 const server = new ApolloServer({
   typeDefs,
   resolvers,
+  plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
 });
+await server.start();
 
-const { url } = await startStandaloneServer(server, {
-  listen: { port: 4000 },
-});
+app.use(cors(), express.json(), expressMiddleware(server));
 
-// console.log(`🚀  Server ready at: ${url}`);
+await new Promise<void>((resolve) => httpServer.listen({ port: Number(process.env.PORT) || 5000 }, () => resolve()));

@@ -56,12 +56,37 @@ export const IGDB_MAPPING = {
 
 export async function askGemini(prompt: string): Promise<string> {
   try {
+    const responseText = `
+          You are an IGDB query generator. Use this mapping table:
+          Genres: ${JSON.stringify(IGDB_MAPPING.genres)}
+          Platforms: ${JSON.stringify(IGDB_MAPPING.platforms)}
+          Game Modes: ${JSON.stringify(IGDB_MAPPING.game_modes)}
+          Player Perspectives: ${JSON.stringify(IGDB_MAPPING.player_perspectives)}
+
+          User asked: "${prompt}"
+
+          Return ONLY valid JSON. Do not include explanations, code fences, or extra text.
+          The JSON format must be:
+          {
+            "genres": [...],
+            "platforms": [...],
+            "gameModes": [...],
+            "perspectives": [...]
+          }
+
+          When generating recommendations:
+          - Use ONLY numeric IDs for genres, platforms, and themes. DO NOT use text labels.
+          - If a category array is empty, populate it with AT LEAST 2 random valid numeric IDs from that category. NEVER leave an array empty.
+          - Try to ensure the platform array is varied and not always falling back to pc: [6] or playstation 4: [48].
+          - If the array is not empty, leave it as-is.
+        `;
+
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash",
       contents: [
         {
           role: "user",
-          parts: [{ text: prompt }],
+          parts: [{ text: responseText }],
         },
       ],
       config: {
@@ -70,7 +95,6 @@ export async function askGemini(prompt: string): Promise<string> {
         },
       },
     });
-    //console.log("AI RESPONSE:", response.text);
     return response.text ?? "";
   } catch (err) {
     console.error("Gemini error:", err);
